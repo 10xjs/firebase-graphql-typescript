@@ -1,0 +1,17 @@
+overwrite: true
+schema: 'src/functions/graphql/schema.ts'
+documents: null
+generates:
+  ./src/functions/graphql/types.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers
+      - add:
+          content:
+            - // AUTO-GENERATED FILE. DO NOT EDIT.
+            - // Run the `generate` package script to update this file.
+            - // tslint:disable
+    config:
+      contextType: ./context#Context
+      nonOptionalTypename: true
+      avoidOptionals: true

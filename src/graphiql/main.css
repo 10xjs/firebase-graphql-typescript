@@ -1,0 +1,19 @@
+html {
+  height: 100%;
+}
+body {
+  min-height: 100%;
+  margin: 0;
+  display: flex;
+}
+
+#root {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.graphiql-container .toolbar {
+  flex: 1 1 auto;
+}

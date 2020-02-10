@@ -1,0 +1,9 @@
+path /posts/{id} is Post;
+
+type Post {
+  // Make sure that the only value allowed to be written is now.
+  validate() { this.modified == now }
+
+  message: String,
+  modified: Number
+}
