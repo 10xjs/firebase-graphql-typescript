@@ -6,7 +6,8 @@
   },
   "main": "dist/functions/index.js",
   "scripts": {
-    "generate": "graphql-codegen --config codegen.yml",
+    "generate:graphql": "graphql-codegen --config codegen.yml",
+    "generate:graphql-dev": "graphql-codegen --config codegen.yml --watch",
     "build:functions-deps": "mkdir -p dist/functions && cp src/functions/package.template.json dist/functions/package.json",
     "build:functions": "npm run build:functions-deps && tsc -p src/functions/tsconfig.json",
     "build:graphiql": "webpack",
@@ -15,7 +16,7 @@
     "test:lint": "tslint --project tsconfig.json",
     "test:types": "tsc --noEmit --skipLibCheck",
     "serve": "firebase emulators:start",
-    "dev": "NODE_ENV=development npm run build:functions-deps && concurrently npm:build:functions-dev npm:serve npm:build:graphiql-dev",
+    "dev": "NODE_ENV=development npm run build:functions-deps && concurrently npm:generate:graphql-dev npm:build:functions-dev npm:serve npm:build:graphiql-dev",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",

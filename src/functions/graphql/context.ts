@@ -7,9 +7,14 @@ export interface Token {
 }
 
 export interface User {
-  identities: Record<string, unknown>;
+  id: string;
   provider: string;
-  token: Token;
+  identities: Record<string, string[]>;
+  name?: string;
+  picture?: string;
+  email?: string;
+  phoneNumber?: string;
+  emailVerified?: boolean;
 }
 
 export interface Context {

@@ -1,0 +1,10 @@
+{
+  "name": "functions",
+  "private": true,
+  "engines": {
+    "node": "10"
+  },
+  "dependencies": {
+    "firebase-admin": "^8.9.2"
+  }
+}

@@ -1,10 +1,15 @@
-import {ApolloServer} from 'apollo-server-express';
+import {ApolloServer, AuthenticationError} from 'apollo-server-express';
 import express from 'express';
-// import admin from 'firebase-admin';
+import admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 
 import {resolvers} from './graphql/resolvers';
 import {schema} from './graphql/schema';
+import {Context} from './graphql/context';
+
+import {FirebaseUser} from './firebaseUser';
+
+admin.initializeApp();
 
 const app = express();
 
@@ -12,32 +17,29 @@ const server = new ApolloServer({
   resolvers,
   typeDefs: schema,
 
-  introspection: true,
-  playground: true,
+  playground: false,
 
-  // async context({req}) {
-  //   const token = req.headers.authorization?.split('Bearer ')[1] ?? '';
-  //   const user = await admin.auth().verifyIdToken(token);
+  async context({req, res}): Promise<Context> {
+    const token = req.headers.authorization?.split('Bearer ')[1];
 
-  //   return {
-  //     user,
-  //   };
-  // },
+    if (!token) {
+      throw new AuthenticationError('UNAUTHENTICATED');
+    }
+
+    try {
+      const decoded = await admin.auth().verifyIdToken(token);
+      const user = new FirebaseUser(decoded);
+
+      console.log(decoded.firebase.identities);
+      return {user};
+    } catch (error) {
+      const apolloError = new AuthenticationError('UNAUTHENTICATED');
+      apolloError.originalError = error;
+
+      throw apolloError;
+    }
+  },
 });
-
-// // app.use(async (req, res, next) => {
-// //   const idToken = req.headers.authorization?.split('Bearer ')[1];
-
-// //   if (idToken) {
-// //     try {
-// //       req.user = await admin.auth().verifyIdToken(idToken);
-// //       next();
-// //     } catch (error) {
-// //       res.status(403).send('Unauthorized');
-// //       return;
-// //     }
-// //   }
-// // });
 
 server.applyMiddleware({app, path: '/', cors: true});
 

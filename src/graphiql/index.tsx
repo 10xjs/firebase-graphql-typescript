@@ -69,15 +69,22 @@ const AppRoot: React.FC<{app: firebase.app.App}> = ({app}) => {
   return (
     <GraphiQL
       ref={editorRef}
-      fetcher={(params: unknown) =>
-        fetch(getFunctionURL(app, 'graphql'), {
+      fetcher={async (params: unknown) => {
+        const token = await user.getIdToken();
+
+        const path = getFunctionURL(app, 'graphql');
+
+        const response = await fetch(path, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(params),
-        }).then((response) => response.json())
-      }
+        });
+
+        return response.json();
+      }}
     >
       <GraphiQL.Toolbar>
         <GraphiQL.Button
@@ -102,7 +109,7 @@ const AppRoot: React.FC<{app: firebase.app.App}> = ({app}) => {
         />
         <div style={{flex: '1 1 auto'}} />
         <GraphiQL.Menu
-          label={'Signed in as ' + (user.isAnonymous ? 'guest' : user.email)}
+          label={user.displayName ?? user.email ?? user.phoneNumber ?? 'guest'}
           title="File"
         >
           <GraphiQL.MenuItem
